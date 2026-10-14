@@ -1,0 +1,314 @@
+2025-09-24 16:50:44 - VIOLATION: No Helmet by Person (Rider ID: 13) at 16:50:44
+2025-09-24 16:50:49 - VIOLATION: No Helmet by Person (Rider ID: 13) at 16:50:49
+2025-09-24 16:50:52 - VIOLATION: Overspeeding by Motorcycle at 16:50:52
+2025-09-24 16:50:52 - VIOLATION: Overspeeding by Car (IGK09BUE) at 16:50:52
+2025-09-24 16:50:56 - VIOLATION: Overspeeding by Truck at 16:50:56
+2025-09-24 16:51:02 - VIOLATION: No Helmet by Person (Rider ID: 229) at 16:51:02
+2025-09-24 16:51:03 - VIOLATION: No Helmet by Person (Rider ID: 328) at 16:51:03
+2025-09-24 16:51:04 - VIOLATION: No Helmet by Person (Rider ID: 307) at 16:51:04
+2025-09-24 16:51:04 - VIOLATION: Overspeeding by Motorcycle at 16:51:04
+2025-09-24 16:56:15 - VIOLATION: No Helmet by Person (Rider ID: 13) at 16:56:15
+2025-09-24 16:56:20 - VIOLATION: No Helmet by Person (Rider ID: 13) at 16:56:20
+2025-09-24 16:56:22 - VIOLATION: Overspeeding by Motorcycle at 16:56:22
+2025-09-24 16:56:23 - VIOLATION: Overspeeding by Car (IGK09BUE) at 16:56:23
+2025-09-24 16:56:27 - VIOLATION: Overspeeding by Truck at 16:56:27
+2025-09-24 16:56:33 - VIOLATION: No Helmet by Person (Rider ID: 229) at 16:56:33
+2025-09-24 16:56:34 - VIOLATION: No Helmet by Person (Rider ID: 328) at 16:56:34
+2025-09-24 16:56:34 - VIOLATION: No Helmet by Person (Rider ID: 307) at 16:56:34
+2025-09-24 16:56:34 - VIOLATION: Overspeeding by Motorcycle at 16:56:34
+2025-09-24 16:56:38 - VIOLATION: Overspeeding by Motorcycle at 16:56:38
+2025-09-24 17:04:13 - VIOLATION: No Helmet by Person (Rider ID: 13) at 17:04:13
+2025-09-24 17:04:17 - VIOLATION: No Helmet by Person (Rider ID: 13) at 17:04:17
+2025-09-24 17:04:20 - VIOLATION: Overspeeding by Motorcycle at 17:04:20
+2025-09-24 17:04:20 - VIOLATION: Overspeeding by Car (IGK09BUE) at 17:04:20
+2025-09-24 17:04:24 - VIOLATION: Overspeeding by Truck at 17:04:24
+2025-09-24 17:04:30 - VIOLATION: No Helmet by Person (Rider ID: 229) at 17:04:30
+2025-09-24 17:04:31 - VIOLATION: No Helmet by Person (Rider ID: 328) at 17:04:31
+2025-09-24 17:04:32 - VIOLATION: No Helmet by Person (Rider ID: 307) at 17:04:32
+2025-09-24 17:04:32 - VIOLATION: Overspeeding by Motorcycle at 17:04:32
+2025-09-24 17:05:18 - VIOLATION: No Helmet by Person (Rider ID: 13) at 17:05:18
+2025-09-24 17:05:22 - VIOLATION: No Helmet by Person (Rider ID: 13) at 17:05:22
+2025-09-24 17:05:25 - VIOLATION: Overspeeding by Motorcycle at 17:05:25
+2025-09-24 17:05:25 - VIOLATION: Overspeeding by Car (IGK09BUE) at 17:05:25
+2025-09-24 17:05:29 - VIOLATION: Overspeeding by Truck at 17:05:29
+2025-09-24 17:16:38 - VIOLATION: No Helmet by Person (Rider ID: 13) at 17:16:38
+2025-09-24 17:16:42 - VIOLATION: No Helmet by Person (Rider ID: 13) at 17:16:42
+2025-09-24 17:16:45 - VIOLATION: Overspeeding by Motorcycle at 17:16:45
+2025-09-24 17:16:45 - VIOLATION: Overspeeding by Car (IGK09BUE) at 17:16:45
+2025-09-24 17:16:49 - VIOLATION: Overspeeding by Truck at 17:16:49
+2025-09-24 17:16:55 - VIOLATION: No Helmet by Person (Rider ID: 229) at 17:16:55
+2025-09-24 17:16:56 - VIOLATION: No Helmet by Person (Rider ID: 328) at 17:16:56
+2025-09-24 17:16:57 - VIOLATION: No Helmet by Person (Rider ID: 307) at 17:16:57
+2025-09-24 17:16:57 - VIOLATION: Overspeeding by Motorcycle at 17:16:57
+2025-09-24 17:17:33 - VIOLATION: Overspeeding by Car at 17:17:33
+2025-09-24 17:17:37 - VIOLATION: Overspeeding by Car at 17:17:37
+2025-09-24 18:02:28 - VIOLATION: No Helmet by Person (Rider ID: 13) at 18:02:28
+2025-09-24 18:02:32 - VIOLATION: No Helmet by Person (Rider ID: 13) at 18:02:32
+2025-09-24 18:21:46 - VIOLATION: No Helmet by Person (Rider ID: 13) at 18:21:46
+2025-09-24 18:21:50 - VIOLATION: No Helmet by Person (Rider ID: 13) at 18:21:50
+2025-09-24 18:21:53 - VIOLATION: Overspeeding by Motorcycle at 18:21:53
+2025-09-24 18:21:54 - VIOLATION: Overspeeding by Car (IGK09BUE) at 18:21:54
+2025-09-24 18:21:58 - VIOLATION: Overspeeding by Truck at 18:21:58
+2025-09-24 18:22:04 - VIOLATION: No Helmet by Person (Rider ID: 229) at 18:22:04
+2025-09-24 18:22:05 - VIOLATION: No Helmet by Person (Rider ID: 328) at 18:22:05
+2025-09-24 18:22:06 - VIOLATION: No Helmet by Person (Rider ID: 307) at 18:22:06
+2025-09-24 18:22:06 - VIOLATION: Overspeeding by Motorcycle at 18:22:06
+2025-09-24 18:22:10 - VIOLATION: Overspeeding by Motorcycle at 18:22:10
+2025-09-24 18:32:56 - VIOLATION: Overspeeding by Car at 18:32:56
+2025-09-24 18:32:58 - VIOLATION: Overspeeding by Car at 18:32:58
+2025-09-24 18:33:02 - VIOLATION: Overspeeding by Bus at 18:33:02
+2025-09-24 18:33:03 - VIOLATION: Overspeeding by Car at 18:33:03
+2025-09-24 18:33:06 - VIOLATION: Overspeeding by Car (8984749) at 18:33:06
+2025-09-24 18:33:21 - VIOLATION: Overspeeding by Car (B98AU) at 18:33:21
+2025-09-24 18:43:25 - VIOLATION: Overspeeding by Car at 18:43:25
+2025-09-24 18:43:29 - VIOLATION: Overspeeding by Car at 18:43:29
+2025-09-24 18:43:32 - VIOLATION: Overspeeding by Car at 18:43:32
+2025-09-24 18:43:32 - VIOLATION: Overspeeding by Car at 18:43:32
+2025-09-24 18:43:33 - VIOLATION: Overspeeding by Car at 18:43:33
+2025-09-24 18:43:33 - VIOLATION: Overspeeding by Car at 18:43:33
+2025-09-24 18:43:33 - VIOLATION: Overspeeding by Truck at 18:43:33
+2025-09-24 18:43:33 - VIOLATION: Overspeeding by Car at 18:43:33
+2025-09-24 18:43:49 - VIOLATION: Overspeeding by Car at 18:43:49
+2025-09-24 18:43:50 - VIOLATION: Overspeeding by Car at 18:43:50
+2025-09-24 18:43:51 - VIOLATION: Overspeeding by Car at 18:43:51
+2025-09-24 18:43:55 - VIOLATION: Overspeeding by Car at 18:43:55
+2025-09-24 18:44:00 - VIOLATION: Overspeeding by Car at 18:44:00
+2025-09-24 18:44:01 - VIOLATION: Overspeeding by Car at 18:44:01
+2025-09-24 18:44:01 - VIOLATION: Overspeeding by Car at 18:44:01
+2025-09-24 18:44:01 - VIOLATION: Overspeeding by Car at 18:44:01
+2025-09-24 18:44:01 - VIOLATION: Overspeeding by Car at 18:44:01
+2025-09-24 18:44:01 - VIOLATION: Overspeeding by Car at 18:44:01
+2025-09-24 18:44:02 - VIOLATION: Overspeeding by Car (BL"291ZP) at 18:44:02
+2025-09-24 18:44:07 - VIOLATION: Overspeeding by Car at 18:44:07
+2025-09-24 18:54:54 - VIOLATION: Overspeeding by Car at 18:54:54
+2025-09-24 18:55:17 - VIOLATION: Overspeeding by Bus at 18:55:17
+2025-09-24 18:55:22 - VIOLATION: Overspeeding by Bus at 18:55:22
+2025-09-24 19:03:38 - VIOLATION: Overspeeding by Car at 19:03:38
+2025-09-24 19:03:59 - VIOLATION: Overspeeding by Car at 19:03:59
+2025-09-24 19:04:00 - VIOLATION: Overspeeding by Bus at 19:04:00
+2025-09-24 19:08:15 - VIOLATION: Overspeeding by Car at 19:08:15
+2025-09-24 19:08:21 - VIOLATION: Overspeeding by Car at 19:08:21
+2025-09-24 19:08:25 - VIOLATION: Overspeeding by Car at 19:08:25
+2025-09-24 19:08:25 - VIOLATION: Overspeeding by Car at 19:08:25
+2025-09-24 19:08:25 - VIOLATION: Overspeeding by Car at 19:08:25
+2025-09-24 20:04:33 - VIOLATION: No Helmet by Person (Rider ID: 13.0) at 20:04:33
+2025-09-24 20:04:36 - VIOLATION: No Helmet by Person (Rider ID: 13.0) at 20:04:36
+2025-09-24 20:04:37 - VIOLATION: Overspeeding by Motorcycle at 20:04:37
+2025-09-24 20:04:38 - VIOLATION: Overspeeding by Car (IGK09BUE) at 20:04:38
+2025-09-25 13:20:08 - VIOLATION: Overspeeding by Car at 13:20:08
+2025-09-25 13:22:03 - VIOLATION: Overspeeding by Car at 13:22:03
+2025-09-25 13:22:07 - VIOLATION: Overspeeding by Car at 13:22:07
+2025-09-25 13:22:12 - VIOLATION: Overspeeding by Car at 13:22:12
+2025-09-25 13:22:27 - VIOLATION: Overspeeding by Car at 13:22:27
+2025-09-25 13:22:28 - VIOLATION: Overspeeding by Car at 13:22:28
+2025-09-25 14:01:11 - VIOLATION: Overspeeding by Car at 14:01:11
+2025-09-25 14:01:11 - VIOLATION: Overspeeding by Car at 14:01:11
+2025-09-25 14:01:12 - VIOLATION: Overspeeding by Car at 14:01:12
+2025-09-25 14:01:12 - VIOLATION: Overspeeding by Car at 14:01:12
+2025-09-25 14:01:18 - VIOLATION: Overspeeding by Car at 14:01:18
+2025-09-25 14:01:20 - VIOLATION: Overspeeding by Car at 14:01:20
+2025-09-25 14:02:00 - VIOLATION: Overspeeding by Car at 14:02:00
+2025-09-25 14:02:04 - VIOLATION: Overspeeding by Car at 14:02:04
+2025-09-25 14:02:10 - VIOLATION: Overspeeding by Car at 14:02:10
+2025-09-25 14:04:00 - VIOLATION: No Helmet by Person (Rider ID: 13.0) at 14:04:00
+2025-09-25 14:04:03 - VIOLATION: No Helmet by Person (Rider ID: 13.0) at 14:04:03
+2025-09-25 14:04:04 - VIOLATION: Overspeeding by Motorcycle at 14:04:04
+2025-09-25 14:04:05 - VIOLATION: Overspeeding by Car (IGK09BUE) at 14:04:05
+2025-09-25 14:06:04 - VIOLATION: Overspeeding by Car at 14:06:04
+2025-09-25 14:06:08 - VIOLATION: Overspeeding by Car at 14:06:08
+2025-09-25 14:06:14 - VIOLATION: Overspeeding by Car at 14:06:14
+2025-09-25 14:06:31 - VIOLATION: Overspeeding by Car at 14:06:31
+2025-09-25 14:06:32 - VIOLATION: Overspeeding by Car at 14:06:32
+2025-09-25 14:13:24 - VIOLATION: Overspeeding by Car at 14:13:24
+2025-09-25 14:13:28 - VIOLATION: Overspeeding by Car at 14:13:28
+2025-09-25 14:13:36 - VIOLATION: Overspeeding by Car at 14:13:36
+2025-09-25 14:14:03 - VIOLATION: Overspeeding by Car at 14:14:03
+2025-09-25 14:14:05 - VIOLATION: Overspeeding by Car at 14:14:05
+2025-09-25 14:14:47 - VIOLATION: Overspeeding by Car at 14:14:47
+2025-09-25 14:21:21 - VIOLATION: Overspeeding by Car at 14:21:21
+2025-09-25 14:21:25 - VIOLATION: Overspeeding by Car at 14:21:25
+2025-09-25 14:26:03 - VIOLATION: Overspeeding by Car at 14:26:03
+2025-09-25 14:26:07 - VIOLATION: Overspeeding by Car at 14:26:07
+2025-09-25 14:26:46 - VIOLATION: Overspeeding by Car at 14:26:46
+2025-09-25 14:26:46 - VIOLATION: Overspeeding by Car at 14:26:46
+2025-09-25 14:26:47 - VIOLATION: Overspeeding by Car at 14:26:47
+2025-09-25 14:26:48 - VIOLATION: Overspeeding by Car at 14:26:48
+2025-09-25 14:26:53 - VIOLATION: Overspeeding by Car at 14:26:53
+2025-09-25 14:26:55 - VIOLATION: Overspeeding by Car at 14:26:55
+2025-09-25 14:26:55 - VIOLATION: Overspeeding by Car at 14:26:55
+2025-09-25 14:27:02 - VIOLATION: Overspeeding by Car (GXIS0GJ) at 14:27:02
+2025-09-25 14:27:12 - VIOLATION: Overspeeding by Car at 14:27:12
+2025-09-25 14:27:19 - VIOLATION: Overspeeding by Car at 14:27:19
+2025-09-25 14:27:21 - VIOLATION: Overspeeding by Car at 14:27:21
+2025-09-25 14:27:21 - VIOLATION: Overspeeding by Car (APO5ED) at 14:27:21
+2025-09-25 14:27:32 - VIOLATION: Overspeeding by Car at 14:27:32
+2025-09-25 14:27:37 - VIOLATION: Overspeeding by Car at 14:27:37
+2025-09-25 14:27:38 - VIOLATION: Overspeeding by Car at 14:27:38
+2025-09-25 14:27:40 - VIOLATION: Overspeeding by Car at 14:27:40
+2025-09-25 14:32:13 - VIOLATION: Overspeeding by Car (NMIJNRU) at 14:32:13
+2025-09-25 14:32:13 - VIOLATION: Overspeeding by Car at 14:32:13
+2025-09-25 14:32:13 - VIOLATION: Overspeeding by Car at 14:32:13
+2025-09-25 14:32:14 - VIOLATION: Overspeeding by Car (HVSVSU) at 14:32:14
+2025-09-25 14:32:19 - VIOLATION: Overspeeding by Car at 14:32:19
+2025-09-25 14:32:22 - VIOLATION: Overspeeding by Car (Reading...) at 14:32:22
+2025-09-25 14:32:22 - VIOLATION: Overspeeding by Car at 14:32:22
+2025-09-25 14:32:29 - VIOLATION: Overspeeding by Car (GXIS0GJ) at 14:32:29
+2025-09-25 14:32:39 - VIOLATION: Overspeeding by Car at 14:32:39
+2025-09-25 14:32:46 - VIOLATION: Overspeeding by Car at 14:32:46
+2025-09-25 14:32:48 - VIOLATION: Overspeeding by Car at 14:32:48
+2025-09-25 14:32:49 - VIOLATION: Overspeeding by Car (APO5ED) at 14:32:49
+2025-09-25 14:32:59 - VIOLATION: Overspeeding by Car at 14:32:59
+2025-09-25 14:33:04 - VIOLATION: Overspeeding by Car at 14:33:04
+2025-09-25 14:33:05 - VIOLATION: Overspeeding by Car (WAOZEKD) at 14:33:05
+2025-09-25 14:33:07 - VIOLATION: Overspeeding by Car (EXGICBG) at 14:33:07
+2025-09-25 14:33:14 - VIOLATION: Overspeeding by Car at 14:33:14
+2025-09-25 14:33:15 - VIOLATION: Overspeeding by Car at 14:33:15
+2025-09-25 14:33:15 - VIOLATION: Overspeeding by Car at 14:33:15
+2025-09-25 14:38:22 - VIOLATION: Overspeeding by Car (NMIJNRU) at 14:38:22
+2025-09-25 14:38:23 - VIOLATION: Overspeeding by Car at 14:38:23
+2025-09-25 14:38:24 - VIOLATION: Overspeeding by Car at 14:38:24
+2025-09-25 14:38:24 - VIOLATION: Overspeeding by Car (Reading...) at 14:38:24
+2025-09-25 14:38:34 - VIOLATION: Overspeeding by Car at 14:38:34
+2025-09-25 14:38:37 - VIOLATION: Overspeeding by Car (Reading...) at 14:38:37
+2025-09-25 14:38:38 - VIOLATION: Overspeeding by Car at 14:38:38
+2025-09-25 14:38:46 - VIOLATION: Overspeeding by Car (GXIS0GJ) at 14:38:46
+2025-09-25 14:38:59 - VIOLATION: Overspeeding by Car at 14:38:59
+2025-09-25 14:39:08 - VIOLATION: Overspeeding by Car at 14:39:08
+2025-09-25 14:39:11 - VIOLATION: Overspeeding by Car at 14:39:11
+2025-09-25 14:39:11 - VIOLATION: Overspeeding by Car (Reading...) at 14:39:11
+2025-09-25 14:39:26 - VIOLATION: Overspeeding by Car at 14:39:26
+2025-09-25 14:39:34 - VIOLATION: Overspeeding by Car (Reading...) at 14:39:34
+2025-09-25 14:39:34 - VIOLATION: Overspeeding by Car (Reading...) at 14:39:34
+2025-09-25 14:39:38 - VIOLATION: Overspeeding by Car (EXEINBG) at 14:39:38
+2025-09-25 14:39:46 - VIOLATION: Overspeeding by Car at 14:39:46
+2025-09-25 14:39:47 - VIOLATION: Overspeeding by Car at 14:39:47
+2025-09-25 14:39:47 - VIOLATION: Overspeeding by Car at 14:39:47
+2025-09-25 14:40:00 - VIOLATION: Overspeeding by Truck at 14:40:00
+2025-09-25 14:40:04 - VIOLATION: Overspeeding by Car at 14:40:04
+2025-09-25 14:40:08 - VIOLATION: Overspeeding by Car (Reading...) at 14:40:08
+2025-09-25 14:40:45 - VIOLATION: Overspeeding by Car at 14:40:45
+2025-09-25 14:42:02 - VIOLATION: Overspeeding by Car (Reading...) at 14:42:02
+2025-09-25 14:42:06 - VIOLATION: Overspeeding by Car at 14:42:06
+2025-09-25 14:42:13 - VIOLATION: Overspeeding by Car (Reading...) at 14:42:13
+2025-09-25 14:42:32 - VIOLATION: Overspeeding by Car at 14:42:32
+2025-09-25 14:42:34 - VIOLATION: Overspeeding by Car at 14:42:34
+2025-09-25 14:46:39 - VIOLATION: Overspeeding by Car (NMIJNRU) at 14:46:39
+2025-09-25 14:46:39 - VIOLATION: Overspeeding by Car at 14:46:39
+2025-09-25 14:46:40 - VIOLATION: Overspeeding by Car at 14:46:40
+2025-09-25 14:46:40 - VIOLATION: Overspeeding by Car (Reading...) at 14:46:40
+2025-09-25 14:46:48 - VIOLATION: Overspeeding by Car at 14:46:48
+2025-09-25 14:46:50 - VIOLATION: Overspeeding by Car (Reading...) at 14:46:50
+2025-09-25 14:46:51 - VIOLATION: Overspeeding by Car at 14:46:51
+2025-09-25 14:46:59 - VIOLATION: Overspeeding by Car (GXIS0GJ) at 14:46:59
+2025-09-25 14:47:10 - VIOLATION: Overspeeding by Car at 14:47:10
+2025-09-25 14:47:19 - VIOLATION: Overspeeding by Car at 14:47:19
+2025-09-25 14:47:21 - VIOLATION: Overspeeding by Car at 14:47:21
+2025-09-25 14:47:22 - VIOLATION: Overspeeding by Car (Reading...) at 14:47:22
+2025-09-25 14:47:34 - VIOLATION: Overspeeding by Car at 14:47:34
+2025-09-25 14:47:42 - VIOLATION: Overspeeding by Car (Reading...) at 14:47:42
+2025-09-25 14:47:42 - VIOLATION: Overspeeding by Car (Reading...) at 14:47:42
+2025-09-25 14:47:46 - VIOLATION: Overspeeding by Car (EX6INBG) at 14:47:46
+2025-09-25 14:48:26 - VIOLATION: Overspeeding by Car (LMOZHKO) at 14:48:26
+2025-09-25 14:48:46 - VIOLATION: Overspeeding by Car (Reading...) at 14:48:46
+2025-09-25 14:50:06 - VIOLATION: Overspeeding by Car (Reading...) at 14:50:06
+2025-09-25 14:55:25 - VIOLATION: Overspeeding by Car at 14:55:25
+2025-09-25 14:55:26 - VIOLATION: Overspeeding by Car at 14:55:26
+2025-09-25 14:55:28 - VIOLATION: Overspeeding by Car at 14:55:28
+2025-09-25 14:55:29 - VIOLATION: Overspeeding by Car at 14:55:29
+2025-09-25 14:55:50 - VIOLATION: Overspeeding by Car at 14:55:50
+2025-09-25 14:55:56 - VIOLATION: Overspeeding by Car at 14:55:56
+2025-09-25 14:55:57 - VIOLATION: Overspeeding by Car at 14:55:57
+2025-09-25 14:56:13 - VIOLATION: Overspeeding by Car (GXIS0GJ) at 14:56:13
+2025-09-25 14:56:29 - VIOLATION: Overspeeding by Car at 14:56:29
+2025-09-25 14:56:41 - VIOLATION: Overspeeding by Car at 14:56:41
+2025-09-25 14:56:45 - VIOLATION: Overspeeding by Car at 14:56:45
+2025-09-25 14:56:46 - VIOLATION: Overspeeding by Car (KR05J;) at 14:56:46
+2025-09-25 14:57:53 - VIOLATION: Overspeeding by Car (C98191P) at 14:57:53
+2025-09-25 14:57:54 - VIOLATION: Overspeeding by Truck (4OUUB48744) at 14:57:54
+2025-09-25 14:58:01 - VIOLATION: Overspeeding by Car (JBRD619874) at 14:58:01
+2025-09-25 14:58:19 - VIOLATION: Overspeeding by Truck (657/548) at 14:58:19
+2025-09-25 14:59:41 - VIOLATION: Overspeeding by Car (I402K41026) at 14:59:41
+2025-09-25 14:59:46 - VIOLATION: Overspeeding by Car at 14:59:46
+2025-09-25 14:59:58 - VIOLATION: Overspeeding by Car at 14:59:58
+2025-09-25 15:06:33 - VIOLATION: Overspeeding by Car at 15:06:33
+2025-09-25 15:06:43 - VIOLATION: Overspeeding by Car at 15:06:43
+2025-09-25 15:06:50 - VIOLATION: Overspeeding by Car at 15:06:50
+2025-09-25 15:07:10 - VIOLATION: Overspeeding by Car at 15:07:10
+2025-09-25 15:07:11 - VIOLATION: Overspeeding by Car at 15:07:11
+2025-09-25 15:07:50 - VIOLATION: Overspeeding by Car (NMIJNRU) at 15:07:50
+2025-09-25 15:07:50 - VIOLATION: Overspeeding by Car at 15:07:50
+2025-09-25 15:07:51 - VIOLATION: Overspeeding by Car at 15:07:51
+2025-09-25 15:07:52 - VIOLATION: Overspeeding by Car at 15:07:52
+2025-09-25 15:07:59 - VIOLATION: Overspeeding by Car at 15:07:59
+2025-09-25 15:08:02 - VIOLATION: Overspeeding by Car at 15:08:02
+2025-09-25 15:08:02 - VIOLATION: Overspeeding by Car at 15:08:02
+2025-09-25 15:08:10 - VIOLATION: Overspeeding by Car (GXIS0GJ) at 15:08:10
+2025-09-25 15:08:23 - VIOLATION: Overspeeding by Car at 15:08:23
+2025-09-25 15:08:31 - VIOLATION: Overspeeding by Car at 15:08:31
+2025-09-25 15:08:34 - VIOLATION: Overspeeding by Car at 15:08:34
+2025-09-25 15:08:34 - VIOLATION: Overspeeding by Car at 15:08:34
+2025-09-25 15:08:48 - VIOLATION: Overspeeding by Car at 15:08:48
+2025-09-25 15:08:55 - VIOLATION: Overspeeding by Car at 15:08:55
+2025-09-25 15:08:56 - VIOLATION: Overspeeding by Car at 15:08:56
+2025-09-25 15:09:00 - VIOLATION: Overspeeding by Car (EX6INBG) at 15:09:00
+2025-09-25 15:09:15 - VIOLATION: Overspeeding by Car at 15:09:15
+2025-09-25 15:09:15 - VIOLATION: Overspeeding by Car at 15:09:15
+2025-09-25 15:09:16 - VIOLATION: Overspeeding by Car at 15:09:16
+2025-09-25 15:10:16 - VIOLATION: Overspeeding by Car (NMIJNRU) at 15:10:16
+2025-09-25 15:10:16 - VIOLATION: Overspeeding by Car at 15:10:16
+2025-09-25 15:10:17 - VIOLATION: Overspeeding by Car at 15:10:17
+2025-09-25 15:10:18 - VIOLATION: Overspeeding by Car (Reading...) at 15:10:18
+2025-09-25 15:11:17 - VIOLATION: Overspeeding by Car (F98191P) at 15:11:17
+2025-09-25 15:11:18 - VIOLATION: Overspeeding by Truck (BNU74) at 15:11:18
+2025-09-25 15:11:47 - VIOLATION: Overspeeding by Car (619874) at 15:11:47
+2025-09-25 15:12:08 - VIOLATION: Overspeeding by Truck (0571648) at 15:12:08
+2025-09-25 15:13:29 - VIOLATION: Overspeeding by Car (LMOZHKO) at 15:13:29
+2025-09-25 15:13:48 - VIOLATION: Overspeeding by Car (Reading...) at 15:13:48
+2025-09-25 15:17:49 - VIOLATION: Overspeeding by Car at 15:17:49
+2025-09-25 15:17:54 - VIOLATION: No Helmet by Person (Rider ID: 598.0) at 15:17:54
+2025-09-25 15:17:54 - VIOLATION: Overspeeding by Motorcycle at 15:17:54
+2025-09-25 15:18:41 - VIOLATION: No Helmet by Person (Rider ID: 874.0) at 15:18:41
+2025-09-25 15:21:16 - VIOLATION: Overspeeding by Car (Reading...) at 15:21:16
+2025-09-25 15:21:17 - VIOLATION: Overspeeding by Car (Reading...) at 15:21:17
+2025-09-25 15:21:18 - VIOLATION: Overspeeding by Car (Reading...) at 15:21:18
+2025-09-25 15:21:24 - VIOLATION: Overspeeding by Car (Reading...) at 15:21:24
+2025-09-25 15:21:25 - VIOLATION: Overspeeding by Car (Reading...) at 15:21:25
+2025-09-25 15:21:43 - VIOLATION: Overspeeding by Car (Reading...) at 15:21:43
+2025-09-25 15:21:46 - VIOLATION: Overspeeding by Car (Reading...) at 15:21:46
+2025-09-25 15:21:50 - VIOLATION: Overspeeding by Car (Reading...) at 15:21:50
+2025-09-25 15:22:01 - VIOLATION: Overspeeding by Car (Reading...) at 15:22:01
+2025-09-25 15:22:02 - VIOLATION: Overspeeding by Car (Reading...) at 15:22:02
+2025-09-25 15:23:18 - VIOLATION: Overspeeding by Car at 15:23:18
+2025-09-25 15:23:48 - VIOLATION: Overspeeding by Car (Reading...) at 15:23:48
+2025-09-25 15:23:50 - VIOLATION: Overspeeding by Car (Reading...) at 15:23:50
+2025-09-29 13:30:59 - VIOLATION: Overspeeding by Car (NMIJNRU) at 13:30:59
+2025-09-29 13:30:59 - VIOLATION: Overspeeding by Car at 13:30:59
+2025-09-29 13:31:00 - VIOLATION: Overspeeding by Car at 13:31:00
+2025-09-29 13:31:00 - VIOLATION: Overspeeding by Car (Reading...) at 13:31:00
+2025-09-29 13:31:12 - VIOLATION: Overspeeding by Car at 13:31:12
+2025-09-29 13:31:14 - VIOLATION: Overspeeding by Car (Reading...) at 13:31:14
+2025-09-29 13:31:15 - VIOLATION: Overspeeding by Car at 13:31:15
+2025-09-29 13:31:24 - VIOLATION: Overspeeding by Car (GXIS0GJ) at 13:31:24
+2025-09-29 13:31:36 - VIOLATION: Overspeeding by Car at 13:31:36
+2025-09-29 13:33:10 - VIOLATION: Overspeeding by Car (Reading...) at 13:33:10
+2025-09-29 13:33:16 - VIOLATION: Overspeeding by Car (Reading...) at 13:33:16
+2025-09-29 13:33:21 - VIOLATION: Overspeeding by Car (Reading...) at 13:33:21
+2025-09-29 13:33:27 - VIOLATION: Overspeeding by Car at 13:33:27
+2025-09-29 13:34:24 - VIOLATION: No Helmet by Person (Rider ID: 850.0) at 13:34:24
+2025-09-29 13:34:30 - VIOLATION: No Helmet by Person (Rider ID: 909.0) at 13:34:30
+2025-09-29 13:34:38 - VIOLATION: Overspeeding by Car at 13:34:38
+2025-09-29 13:34:38 - VIOLATION: Overspeeding by Motorcycle at 13:34:38
+2025-09-29 13:34:40 - VIOLATION: Overspeeding by Car at 13:34:40
+2025-09-29 13:34:48 - VIOLATION: Overspeeding by Car at 13:34:48
+2025-09-29 13:34:48 - VIOLATION: Overspeeding by Car at 13:34:48
+2025-09-29 13:34:53 - VIOLATION: Overspeeding by Motorcycle at 13:34:53
+2025-09-29 13:34:54 - VIOLATION: Overspeeding by Car at 13:34:54
+2025-09-29 13:35:01 - VIOLATION: No Helmet by Person (Rider ID: 1438.0) at 13:35:01
+2025-09-29 13:37:20 - VIOLATION: Overspeeding by Car at 13:37:20
+2025-09-29 13:37:43 - VIOLATION: Overspeeding by Car (Reading...) at 13:37:43
+2025-09-29 13:37:43 - VIOLATION: Overspeeding by Bus (Reading...) at 13:37:43
+2025-09-29 13:38:22 - VIOLATION: Overspeeding by Car at 13:38:22
+2025-09-29 13:39:20 - VIOLATION: No Helmet by Person (Rider ID: 13.0) at 13:39:20
+2025-09-29 13:39:23 - VIOLATION: No Helmet by Person (Rider ID: 13.0) at 13:39:23
+2025-09-29 13:39:25 - VIOLATION: Overspeeding by Motorcycle (Reading...) at 13:39:25
+2025-09-29 13:39:25 - VIOLATION: Overspeeding by Car (Reading...) at 13:39:25

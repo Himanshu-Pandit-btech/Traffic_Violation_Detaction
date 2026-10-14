@@ -1,0 +1,1133 @@
+# traffic_violation_detection_efficientdet.py
+import cv2
+import numpy as np
+import datetime
+import time
+import os
+import requests
+from collections import deque
+from PIL import Image
+import torch
+import torchvision.transforms as transforms
+import easyocr
+import sys
+
+# Install required packages if not already installed
+try:
+    from effdet import create_model, create_dataset, create_loader, get_efficientdet_config
+    from effdet.efficientdet import HeadNet
+except ImportError:
+    print("Installing required packages...")
+    import subprocess
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "effdet", "pycocotools"])
+    from effdet import create_model, create_dataset, create_loader, get_efficientdet_config
+    from effdet.efficientdet import HeadNet
+
+# Get the directory where the script is located
+script_dir = os.path.dirname(os.path.abspath(__file__))
+# Change to that directory
+os.chdir(script_dir)
+
+print(f"Script running from: {script_dir}")
+
+# Define direct paths to required files
+BASE_DIR = script_dir + "/"
+
+# Create directories for storing evidence
+os.makedirs(BASE_DIR + 'violations', exist_ok=True)
+os.makedirs(BASE_DIR + 'screenshots', exist_ok=True)
+
+# Ask user for input source
+print("Traffic Violation Detection System")
+print("Choose input source:")
+print("1. Webcam")
+print("2. Video file")
+choice = input("Enter your choice (1 or 2): ")
+
+# Initialize video capture based on user choice
+cap = None
+source_name = ""
+video_path = ""
+is_video_file = False
+
+if choice == "1":
+    # Webcam
+    cap = cv2.VideoCapture(0)  # 0 for default webcam, change if using external camera
+    source_name = "Webcam"
+    if not cap.isOpened():
+        print("Error: Could not open webcam")
+        exit()
+        
+    # Set camera resolution for better processing
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+    
+elif choice == "2":
+    # Video file
+    video_path = input("Enter the path to your MP4 video file: ")
+    
+    # Check if file exists
+    if not os.path.exists(video_path):
+        print(f"Error: File '{video_path}' does not exist!")
+        exit()
+    
+    # Check if it's a valid video file
+    if not video_path.lower().endswith('.mp4'):
+        print("Error: Please provide a valid MP4 video file")
+        exit()
+    
+    cap = cv2.VideoCapture(video_path)
+    source_name = os.path.basename(video_path)
+    is_video_file = True
+    
+else:
+    print("Invalid choice. Using webcam as default.")
+    cap = cv2.VideoCapture(0)
+    source_name = "Webcam"
+    if not cap.isOpened():
+        print("Error: Could not open webcam")
+        exit()
+
+# Check if video source opened successfully
+if not cap.isOpened():
+    print(f"Error: Could not open {source_name}")
+    exit()
+
+# Constants for violation detection
+SPEED_LIMIT_KMH = 75  # km/h
+SPEED_LIMIT_MS = SPEED_LIMIT_KMH / 3.6  # Convert to m/s
+MIN_CONFIDENCE = 0.6  # Increased confidence threshold to reduce false positives
+TRACKING_LENGTH = 20  # Reduced from 30 to improve performance
+
+# Colors for bounding boxes
+GREEN = (0, 255, 0)      # Normal speed
+RED = (0, 0, 255)        # Violation (any type)
+PURPLE = (255, 0, 255)   # Human
+BLUE = (255, 0, 0)       # No helmet (will change to red for violation)
+YELLOW = (0, 255, 255)   # Traffic signal
+ORANGE = (0, 165, 255)   # Two-wheelers
+
+# Initialize EasyOCR for license plate recognition and text detection
+reader = None
+try:
+    reader = easyocr.Reader(['en'], gpu=torch.cuda.is_available())
+    print("EasyOCR initialized successfully!")
+except Exception as e:
+    print(f"EasyOCR initialization error: {e}")
+
+# COCO class names for object detection
+COCO_INSTANCE_CATEGORY_NAMES = [
+    '__background__', 'person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'train', 'truck', 'boat',
+    'traffic light', 'fire hydrant', 'stop sign', 'parking meter', 'bench', 'bird', 'cat',
+    'dog', 'horse', 'sheep', 'cow', 'elephant', 'bear', 'zebra', 'giraffe', 'backpack',
+    'umbrella', 'handbag', 'tie', 'suitcase', 'frisbee', 'skis', 'snowboard', 'sports ball',
+    'kite', 'baseball bat', 'baseball glove', 'skateboard', 'surfboard', 'tennis racket',
+    'bottle', 'wine glass', 'cup', 'fork', 'knife', 'spoon', 'bowl', 'banana', 'apple',
+    'sandwich', 'orange', 'broccoli', 'carrot', 'hot dog', 'pizza', 'donut', 'cake', 'chair',
+    'couch', 'potted plant', 'bed', 'dining table', 'toilet', 'tv', 'laptop', 'mouse', 'remote',
+    'keyboard', 'cell phone', 'microwave', 'oven', 'toaster', 'sink', 'refrigerator', 'book',
+    'clock', 'vase', 'scissors', 'teddy bear', 'hair drier', 'toothbrush'
+]
+
+# Vehicle classes in COCO dataset
+vehicle_classes = ['car', 'motorcycle', 'bus', 'truck', 'bicycle']
+two_wheeler_classes = ['motorcycle', 'bicycle']
+person_class = 'person'
+
+# Text-based objects that should be excluded from vehicle detection
+text_objects = ['sign', 'billboard', 'advertisement', 'text', 'word', 'letter']
+
+# Initialize EfficientDet model
+def load_efficientdet_model():
+    try:
+        # Create EfficientDet model with explicit model name
+        model_name = 'tf_efficientdet_d0'  # Explicit model name
+        
+        # Create the model with proper configuration
+        config = get_efficientdet_config(model_name)
+        config.num_classes = 91  # COCO dataset has 91 classes (including background)
+        config.image_size = (512, 512)  # Smaller input size for better performance
+        
+        # Create the model with proper parameters
+        model = create_model(
+            model_name,  # Use the explicit model name
+            bench_task='predict',
+            num_classes=config.num_classes,
+            pretrained=True,
+            image_size=config.image_size
+        )
+        
+        # Load pretrained weights
+        try:
+            checkpoint = torch.hub.load_state_dict_from_url(
+                f'https://github.com/rwightman/efficientdet-pytorch/releases/download/v0.1/{model_name}.pth',
+                map_location='cpu', progress=True
+            )
+            model.load_state_dict(checkpoint)
+        except:
+            print("Using randomly initialized weights (pretrained weights not available)")
+        
+        model.eval()
+        return model, config
+    except Exception as e:
+        print(f"Error creating EfficientDet model: {e}")
+        import traceback
+        traceback.print_exc()
+        return None, None
+
+detection_model, model_config = load_efficientdet_model()
+if detection_model is None:
+    print("Failed to load EfficientDet model, using fallback detection method")
+    # You might want to implement a fallback detection method here
+    exit()
+
+print("EfficientDet model loaded successfully!")
+
+# Traffic signal state simulation
+class TrafficSignal:
+    def __init__(self):
+        self.state = "red"
+        self.last_change = time.time()
+        self.cycle_time = 20
+        self.detected_state = None
+    
+    def update(self, detected_state=None):
+        if detected_state is not None:
+            self.detected_state = detected_state
+            return detected_state
+        
+        current_time = time.time()
+        elapsed = current_time - self.last_change
+        
+        if elapsed > self.cycle_time:
+            self.last_change = current_time
+            if self.state == "red":
+                self.state = "green"
+            elif self.state == "green":
+                self.state = "yellow"
+            else:
+                self.state = "red"
+        
+        return self.state
+
+# Initialize traffic signal
+traffic_signal = TrafficSignal()
+
+# Initialize trackers and data structures
+tracked_objects = {}
+violations_log = []
+frame_count = 0
+fps = 0
+fps_start_time = time.time()
+
+# Define signal area (calibrate this based on your camera view)
+signal_area = [(800, 100), (1100, 100), (1100, 300), (800, 300)]
+
+# Function to calculate speed
+def calculate_speed(prev_pos, curr_pos, fps, ppm):
+    pixel_distance = np.sqrt((curr_pos[0] - prev_pos[0])**2 + (curr_pos[1] - prev_pos[1])**2)
+    distance = pixel_distance / ppm
+    speed_ms = distance * fps
+    speed_kmh = speed_ms * 3.6
+    return speed_kmh, speed_ms
+
+# Function to detect license plate using EasyOCR with enhanced preprocessing
+def detect_license_plate(vehicle_roi):
+    try:
+        if reader is None:
+            return "NOT RECORDED"
+            
+        if vehicle_roi is None or vehicle_roi.size == 0:
+            return "NOT RECORDED"
+            
+        # Apply preprocessing to enhance license plate detection
+        enhanced_roi = enhance_license_plate_detection(vehicle_roi)
+        
+        # Convert BGR to RGB
+        vehicle_rgb = cv2.cvtColor(enhanced_roi, cv2.COLOR_BGR2RGB)
+        
+        # Use EasyOCR to detect text
+        results = reader.readtext(vehicle_rgb)
+        
+        # Filter potential license plates
+        for result in results:
+            text = result[1].upper().replace(" ", "")
+            if 6 <= len(text) <= 10 and any(c.isdigit() for c in text) and any(c.isalpha() for c in text):
+                return text
+        
+        return "NOT RECORDED"
+    except Exception as e:
+        return "NOT RECORDED"
+
+# Function to detect helmet using pre-trained model
+def detect_helmet(person_roi):
+    try:
+        if detection_model is None:
+            return False
+            
+        if person_roi is None or person_roi.size == 0:
+            return False
+            
+        # Preprocess the image
+        transform = transforms.Compose([
+            transforms.ToPILImage(),
+            transforms.Resize((256, 256)),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+        ])
+        
+        input_tensor = transform(person_roi).unsqueeze(0)
+        
+        # Perform inference
+        with torch.no_grad():
+            predictions = detection_model(input_tensor)
+        
+        # Check if helmet is detected
+        for score, label in zip(predictions[0]['scores'], predictions[0]['labels']):
+            if score > 0.5:
+                class_name = COCO_INSTANCE_CATEGORY_NAMES[label]
+                if ('helmet' in class_name.lower() or 
+                    'hat' in class_name.lower() or 
+                    'cap' in class_name.lower() or
+                    class_name.lower() in ['motorcycle', 'motorcycle helmet']):
+                    return True
+        
+        return False
+    except Exception as e:
+        return False
+
+# Function to save violation evidence
+def save_violation_evidence(obj_id, violation_type, frame, license_plate="NOT RECORDED"):
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S_%f")
+    
+    # Create violation-specific folder
+    violation_dir = f"{BASE_DIR}violations/{violation_type}/"
+    os.makedirs(violation_dir, exist_ok=True)
+    
+    filename = f"{violation_dir}{violation_type}_{obj_id}_{timestamp}.jpg"
+    
+    # Add license plate info to the image if available
+    if license_plate != "NOT RECORDED":
+        annotated_frame = frame.copy()
+        cv2.putText(annotated_frame, f"License: {license_plate}", (10, 30), 
+                   cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
+        cv2.imwrite(filename, annotated_frame)
+    else:
+        cv2.imwrite(filename, frame)
+    
+    return filename
+
+# Function to check if a point is inside the signal area
+def in_signal_area(x, y):
+    n = len(signal_area)
+    inside = False
+    p1x, p1y = signal_area[0]
+    for i in range(n+1):
+        p2x, p2y = signal_area[i % n]
+        if y > min(p1y, p2y):
+            if y <= max(p1y, p2y):
+                if x <= max(p1x, p2x):
+                    if p1y != p2y:
+                        xinters = (y-p1y)*(p2x-p1x)/(p2y-p1y)+p1x
+                    if p1x == p2x or x <= xinters:
+                        inside = not inside
+        p1x, p1y = p2x, p2y
+    return inside
+
+# Function to calculate object center
+def get_center(box):
+    x, y, w, h = box
+    return (x + w//2, y + h//2)
+
+# Function to calculate distance between two points
+def distance(p1, p2):
+    return np.sqrt((p2[0] - p1[0])**2 + (p2[1] - p1[1])**2)
+
+# Function to match new detections with existing objects
+def match_detections(new_detections, existing_objects, max_distance=50):
+    matched = {}
+    unmatched_new = list(new_detections.keys())
+    unmatched_existing = list(existing_objects.keys())
+    
+    # Try to match existing objects with new detections
+    for obj_id in list(existing_objects.keys()):
+        if obj_id not in existing_objects:
+            continue
+            
+        obj_data = existing_objects[obj_id]
+        obj_center = get_center(obj_data['box'])
+        best_match = None
+        min_dist = max_distance
+        
+        for det_id in unmatched_new:
+            if det_id not in new_detections:
+                continue
+                
+            det_center = get_center(new_detections[det_id]['box'])
+            dist = distance(obj_center, det_center)
+            
+            if dist < min_dist and new_detections[det_id]['type'] == obj_data['type']:
+                min_dist = dist
+                best_match = det_id
+        
+        if best_match is not None:
+            matched[obj_id] = best_match
+            unmatched_new.remove(best_match)
+            if obj_id in unmatched_existing:
+                unmatched_existing.remove(obj_id)
+    
+    return matched, unmatched_new, unmatched_existing
+
+# Function to enhance license plate detection
+def enhance_license_plate_detection(vehicle_roi):
+    try:
+        # Convert to grayscale
+        gray = cv2.cvtColor(vehicle_roi, cv2.COLOR_BGR2GRAY)
+        
+        # Apply histogram equalization
+        equalized = cv2.equalizeHist(gray)
+        
+        # Apply Gaussian blur to reduce noise
+        blurred = cv2.GaussianBlur(equalized, (5, 5), 0)
+        
+        # Apply adaptive thresholding
+        thresh = cv2.adaptiveThreshold(blurred, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, 
+                                      cv2.THRESH_BINARY, 11, 2)
+        
+        # Find contours
+        contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        
+        # Filter contours that might be license plates
+        plate_contours = []
+        for contour in contours:
+            x, y, w, h = cv2.boundingRect(contour)
+            aspect_ratio = w / h
+            area = w * h
+            
+            # License plate typically has aspect ratio between 2 and 5
+            if 2 < aspect_ratio < 5 and area > 500:
+                plate_contours.append(contour)
+        
+        # If we found potential license plate regions, use the largest one
+        if plate_contours:
+            largest_contour = max(plate_contours, key=cv2.contourArea)
+            x, y, w, h = cv2.boundingRect(largest_contour)
+            
+            # Extract the potential license plate region
+            plate_roi = vehicle_roi[y:y+h, x:x+w]
+            
+            # Apply additional preprocessing to the license plate region
+            plate_gray = cv2.cvtColor(plate_roi, cv2.COLOR_BGR2GRAY)
+            plate_clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8)).apply(plate_gray)
+            plate_blur = cv2.medianBlur(plate_clahe, 3)
+            
+            # Convert back to BGR for OCR
+            plate_enhanced = cv2.cvtColor(plate_blur, cv2.COLOR_GRAY2BGR)
+            
+            return plate_enhanced
+        
+        return vehicle_roi
+    except Exception as e:
+        return vehicle_roi
+
+# Function to detect traffic light colors
+def detect_traffic_light_color(frame, signal_area):
+    try:
+        # Extract the signal area from the frame
+        x_coords = [point[0] for point in signal_area]
+        y_coords = [point[1] for point in signal_area]
+        
+        x_min, x_max = min(x_coords), max(x_coords)
+        y_min, y_max = min(y_coords), max(y_coords)
+        
+        # Ensure coordinates are within frame bounds
+        x_min = max(0, x_min)
+        y_min = max(0, y_min)
+        x_max = min(frame.shape[1], x_max)
+        y_max = min(frame.shape[0], y_max)
+        
+        if x_max <= x_min or y_max <= y_min:
+            return None
+        
+        signal_roi = frame[y_min:y_max, x_min:x_max]
+        
+        if signal_roi.size == 0:
+            return None
+        
+        # Convert to HSV color space for better color detection
+        hsv = cv2.cvtColor(signal_roi, cv2.COLOR_BGR2HSV)
+        
+        # Define color ranges for traffic lights
+        # Red color range
+        red_lower1 = np.array([0, 100, 100])
+        red_upper1 = np.array([10, 255, 255])
+        red_lower2 = np.array([160, 100, 100])
+        red_upper2 = np.array([180, 255, 255])
+        
+        # Yellow color range
+        yellow_lower = np.array([20, 100, 100])
+        yellow_upper = np.array([30, 255, 255])
+        
+        # Green color range
+        green_lower = np.array([40, 100, 100])
+        green_upper = np.array([80, 255, 255])
+        
+        # Create masks for each color
+        red_mask1 = cv2.inRange(hsv, red_lower1, red_upper1)
+        red_mask2 = cv2.inRange(hsv, red_lower2, red_upper2)
+        red_mask = cv2.bitwise_or(red_mask1, red_mask2)
+        
+        yellow_mask = cv2.inRange(hsv, yellow_lower, yellow_upper)
+        green_mask = cv2.inRange(hsv, green_lower, green_upper)
+        
+        # Count non-zero pixels for each color
+        red_pixels = cv2.countNonZero(red_mask)
+        yellow_pixels = cv2.countNonZero(yellow_mask)
+        green_pixels = cv2.countNonZero(green_mask)
+        
+        # Determine the dominant color
+        max_pixels = max(red_pixels, yellow_pixels, green_pixels)
+        
+        if max_pixels < 50:  # Minimum threshold to avoid noise
+            return None
+        
+        if max_pixels == red_pixels:
+            return "red"
+        elif max_pixels == yellow_pixels:
+            return "yellow"
+        elif max_pixels == green_pixels:
+            return "green"
+        
+        return None
+    except Exception as e:
+        return None
+
+# Function to detect text regions in the frame
+def detect_text_regions(frame):
+    text_regions = []
+    
+    if reader is None:
+        return text_regions
+    
+    try:
+        # Convert to RGB for EasyOCR
+        frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        
+        # Detect text
+        results = reader.readtext(frame_rgb)
+        
+        # Extract text regions
+        for (bbox, text, confidence) in results:
+            if confidence > 0.3:  # Confidence threshold for text detection
+                # Convert bbox to rectangle coordinates
+                top_left = tuple(map(int, bbox[0]))
+                bottom_right = tuple(map(int, bbox[2]))
+                
+                # Add to text regions
+                text_regions.append((top_left, bottom_right))
+    
+    except Exception as e:
+        print(f"Error in text detection: {e}")
+    
+    return text_regions
+
+# Function to check if a detection is likely text (not a vehicle)
+def is_text_detection(box, text_regions, threshold=0.5):
+    x, y, w, h = box
+    detection_area = w * h
+    
+    for text_region in text_regions:
+        (tx1, ty1), (tx2, ty2) = text_region
+        text_area = (tx2 - tx1) * (ty2 - ty1)
+        
+        # Calculate intersection
+        x_left = max(x, tx1)
+        y_top = max(y, ty1)
+        x_right = min(x + w, tx2)
+        y_bottom = min(y + h, ty2)
+        
+        if x_right < x_left or y_bottom < y_top:
+            continue
+            
+        intersection_area = (x_right - x_left) * (y_bottom - y_top)
+        
+        # If significant portion of detection overlaps with text region
+        if intersection_area / detection_area > threshold:
+            return True
+    
+    return False
+
+# Function to check if a detection has text-like characteristics
+def has_text_characteristics(roi):
+    """
+    Check if a region of interest has characteristics of text
+    (high contrast, specific edge patterns, etc.)
+    """
+    if roi is None or roi.size == 0:
+        return False
+    
+    try:
+        # Convert to grayscale
+        gray = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
+        
+        # Calculate contrast (standard deviation of pixel intensities)
+        contrast = np.std(gray)
+        
+        # Calculate edge density
+        edges = cv2.Canny(gray, 50, 150)
+        edge_density = np.sum(edges > 0) / (roi.shape[0] * roi.shape[1])
+        
+        # Text typically has high contrast and moderate edge density
+        if contrast > 40 and 0.05 < edge_density < 0.3:
+            return True
+        
+        return False
+    except Exception as e:
+        return False
+
+# Function to check if a detection is likely a false positive (text misclassified as vehicle)
+def is_likely_false_positive(box, frame, class_name):
+    x, y, w, h = box
+    
+    # Extract the ROI
+    roi = frame[y:y+h, x:x+w]
+    
+    # Check if ROI has text characteristics
+    if has_text_characteristics(roi):
+        return True
+    
+    # Check aspect ratio - text is usually wider than tall
+    aspect_ratio = w / h
+    if aspect_ratio > 3.0:  # Very wide aspect ratio is more likely text
+        return True
+    
+    # Check area - very small detections are more likely to be noise
+    if w * h < 500:  # Less than 500 pixels
+        return True
+    
+    # Check if the detection is too small to be a real vehicle
+    if class_name in ['car', 'truck', 'bus'] and (w < 50 or h < 50):
+        return True
+    
+    # Check if the detection is too large (likely background elements)
+    if w > frame.shape[1] * 0.5 or h > frame.shape[0] * 0.5:
+        return True
+    
+    return False
+
+# Function to filter out overlapping detections (non-maximum suppression)
+def filter_overlapping_detections(detections, overlap_threshold=0.7):
+    """
+    Filter out overlapping detections to keep only the most confident ones
+    """
+    filtered_detections = {}
+    detection_list = list(detections.items())
+    
+    # Sort by confidence (highest first)
+    detection_list.sort(key=lambda x: x[1]['confidence'], reverse=True)
+    
+    for i, (det_id1, det_data1) in enumerate(detection_list):
+        box1 = det_data1['box']
+        x1, y1, w1, h1 = box1
+        area1 = w1 * h1
+        
+        # Check if this detection should be kept
+        keep = True
+        
+        for j, (det_id2, det_data2) in enumerate(detection_list):
+            if i == j:
+                continue
+                
+            box2 = det_data2['box']
+            x2, y2, w2, h2 = box2
+            area2 = w2 * h2
+            
+            # Calculate intersection area
+            x_left = max(x1, x2)
+            y_top = max(y1, y2)
+            x_right = min(x1 + w1, x2 + w2)
+            y_bottom = min(y1 + h1, y2 + h2)
+            
+            if x_right < x_left or y_bottom < y_top:
+                continue
+                
+            intersection_area = (x_right - x_left) * (y_bottom - y_top)
+            
+            # Calculate overlap ratio
+            overlap_ratio = intersection_area / min(area1, area2)
+            
+            if overlap_ratio > overlap_threshold:
+                # If this detection overlaps significantly with a higher confidence detection, discard it
+                if det_data1['confidence'] < det_data2['confidence']:
+                    keep = False
+                    break
+        
+        if keep:
+            filtered_detections[det_id1] = det_data1
+    
+    return filtered_detections
+
+# Function to detect objects using EfficientDet - FIXED VERSION
+def detect_objects_efficientdet(frame, model, min_confidence=0.6):  # Increased minimum confidence
+    try:
+        # First detect text regions to exclude from vehicle detection
+        text_regions = detect_text_regions(frame.copy())
+        
+        # Preprocess the frame
+        transform = transforms.Compose([
+            transforms.ToPILImage(),
+            transforms.Resize((512, 512)),  # EfficientDet input size
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+        ])
+        
+        # Convert BGR to RGB
+        frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        input_tensor = transform(frame_rgb).unsqueeze(0)
+        
+        # Perform inference
+        with torch.no_grad():
+            predictions = model(input_tensor)
+        
+        # Process predictions - FIXED: Properly extract predictions
+        detections = {}
+        
+        # Get the correct format of predictions
+        # EfficientDet returns a tuple of (boxes, scores, labels)
+        if isinstance(predictions, (list, tuple)) and len(predictions) >= 3:
+            boxes = predictions[0].detach().cpu().numpy()
+            scores = predictions[1].detach().cpu().numpy()
+            labels = predictions[2].detach().cpu().numpy()
+        else:
+            # Try to extract from the prediction object
+            try:
+                # Handle different prediction formats
+                if hasattr(predictions, 'bbox'):
+                    boxes = predictions.bbox.detach().cpu().numpy()
+                    scores = predictions.detection_scores.detach().cpu().numpy()
+                    labels = predictions.detection_classes.detach().cpu().numpy()
+                else:
+                    # Fallback to simple array indexing
+                    boxes = predictions.detach().cpu().numpy()[0, :, :4]
+                    scores = predictions.detach().cpu().numpy()[0, :, 4]
+                    labels = predictions.detach().cpu().numpy()[0, :, 5].astype(int)
+            except:
+                print("Could not parse predictions format, using fallback")
+                return {}
+        
+        # Get original frame dimensions for scaling
+        orig_h, orig_w = frame.shape[:2]
+        scale_x, scale_y = orig_w / 512, orig_h / 512
+        
+        # Make sure scores and labels are 1D arrays
+        if len(scores.shape) > 1:
+            scores = scores.flatten()
+        if len(labels.shape) > 1:
+            labels = labels.flatten()
+        
+        # Iterate through each detection
+        for i in range(len(scores)):
+            score = float(scores[i])  # Convert to scalar
+            label = int(labels[i])    # Convert to scalar
+            
+            # Check if the detection meets confidence threshold and is a valid class
+            if score > min_confidence and label < len(COCO_INSTANCE_CATEGORY_NAMES):
+                # Get bounding box coordinates
+                if len(boxes.shape) == 3:
+                    box = boxes[0, i]  # Handle 3D array
+                else:
+                    box = boxes[i]     # Handle 2D array
+                
+                x1, y1, x2, y2 = box
+                x1, y1, x2, y2 = int(x1 * scale_x), int(y1 * scale_y), int(x2 * scale_x), int(y2 * scale_y)
+                w, h = x2 - x1, y2 - y1
+                
+                # Ensure coordinates are within frame bounds
+                x1 = max(0, x1)
+                y1 = max(0, y1)
+                w = min(frame.shape[1] - x1, w)
+                h = min(frame.shape[0] - y1, h)
+                
+                if w <= 0 or h <= 0:
+                    continue
+                
+                class_name = COCO_INSTANCE_CATEGORY_NAMES[label]
+                
+                # Check if this detection is likely text (not a vehicle)
+                if is_text_detection((x1, y1, w, h), text_regions):
+                    continue
+                
+                # Additional check for false positives (text misclassified as vehicles)
+                if class_name in vehicle_classes and is_likely_false_positive((x1, y1, w, h), frame, class_name):
+                    continue
+                
+                # Only track vehicles and people
+                if class_name in vehicle_classes or class_name == person_class:
+                    # Generate unique ID for the detection
+                    det_id = f"{class_name}_{i}_{frame_count}"
+                    
+                    # Extract ROI for license plate and helmet detection
+                    roi = frame[y1:y1+h, x1:x1+w]
+                    
+                    # Detect license plate for vehicles
+                    license_plate = "NOT RECORDED"
+                    if class_name != person_class:
+                        license_plate = detect_license_plate(roi)
+                    
+                    # Detect helmet for motorcyclists
+                    helmet_detected = True
+                    if class_name in two_wheeler_classes:
+                        # For two-wheelers, check if rider is wearing a helmet
+                        rider_roi = roi[:roi.shape[0]//2, :]
+                        helmet_detected = detect_helmet(rider_roi)
+                    
+                    detections[det_id] = {
+                        'box': (x1, y1, w, h),
+                        'type': class_name,
+                        'license_plate': license_plate,
+                        'helmet_detected': helmet_detected,
+                        'confidence': score
+                    }
+        
+        # Filter out overlapping detections
+        detections = filter_overlapping_detections(detections)
+        
+        return detections
+    except Exception as e:
+        print(f"Error in object detection: {e}")
+        import traceback
+        traceback.print_exc()
+        return {}
+
+# Simple fallback object detection using background subtraction
+def detect_objects_fallback(frame):
+    detections = {}
+    
+    # Convert to grayscale
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    
+    # Apply Gaussian blur
+    blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+    
+    # Simple thresholding to detect moving objects
+    _, thresh = cv2.threshold(blurred, 127, 255, cv2.THRESH_BINARY)
+    
+    # Find contours
+    contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    
+    for i, contour in enumerate(contours):
+        area = cv2.contourArea(contour)
+        if area > 500:  # Filter small contours
+            x, y, w, h = cv2.boundingRect(contour)
+            
+            # Simple classification based on aspect ratio
+            aspect_ratio = w / h
+            if aspect_ratio > 1.5:
+                obj_type = "car"
+            elif 0.8 < aspect_ratio < 1.2:
+                obj_type = "person"
+            else:
+                obj_type = "unknown"
+            
+            det_id = f"{obj_type}_{i}_{frame_count}"
+            detections[det_id] = {
+                'box': (x, y, w, h),
+                'type': obj_type,
+                'license_plate': "NOT RECORDED",
+                'helmet_detected': True,
+                'confidence': 0.6
+            }
+    
+    return detections
+
+# Main processing loop
+print(f"Starting traffic violation detection system using {source_name}...")
+print("Press 'q' to quit")
+print("Press 'p' to pause/resume")
+print("Press 'r' to restart video (if playing from file)")
+
+paused = False
+restart_video = False
+frame_skip = 2  # Process every 2nd frame for better performance
+processed_frames = 0
+
+# Pixels per meter calibration (needs to be calibrated for your camera setup)
+PIXELS_PER_METER = 100  # This is an estimate, needs calibration
+
+while True:
+    if restart_video and is_video_file:
+        cap.release()
+        cap = cv2.VideoCapture(video_path)
+        tracked_objects = {}
+        violations_log = []
+        frame_count = 0
+        restart_video = False
+        print("Video restarted")
+    
+    if not paused:
+        ret, frame = cap.read()
+        if not ret:
+            if is_video_file:
+                # For video files, restart from beginning
+                cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+                tracked_objects = {}
+                frame_count = 0
+                print("Video restarted from beginning")
+                continue
+            else:
+                print("Failed to grab frame")
+                break
+        
+        frame_count += 1
+        
+        # Skip frames for better performance
+        if frame_count % frame_skip != 0:
+            continue
+            
+        processed_frames += 1
+        height, width, channels = frame.shape
+        
+        # Calculate FPS
+        if processed_frames % 10 == 0:
+            fps_end_time = time.time()
+            fps = 10 / (fps_end_time - fps_start_time)
+            fps_start_time = time.time()
+        
+        # Detect traffic light color
+        detected_signal_color = detect_traffic_light_color(frame, signal_area)
+        current_signal_state = traffic_signal.update(detected_signal_color)
+        
+        # Draw signal area for visualization
+        cv2.polylines(frame, [np.array(signal_area)], True, YELLOW, 2)
+        cv2.putText(frame, f"Signal: {current_signal_state.upper()}", 
+                   (signal_area[0][0], signal_area[0][1] - 10), 
+                   cv2.FONT_HERSHEY_SIMPLEX, 0.7, YELLOW, 2)
+        
+        # Detect objects in the frame
+        if detection_model is not None:
+            detections = detect_objects_efficientdet(frame, detection_model, MIN_CONFIDENCE)
+        else:
+            detections = detect_objects_fallback(frame)
+        
+        # Match new detections with existing tracked objects
+        matched_ids, unmatched_new_ids, unmatched_existing_ids = match_detections(
+            detections, tracked_objects
+        )
+        
+        # Update existing tracked objects
+        for obj_id, det_id in matched_ids.items():
+            if obj_id not in tracked_objects:
+                continue
+                
+            obj_data = tracked_objects[obj_id]
+            det_data = detections[det_id]
+            
+            # Update position history
+            prev_center = get_center(obj_data['box'])
+            curr_center = get_center(det_data['box'])
+            
+            obj_data['positions'].append(curr_center)
+            if len(obj_data['positions']) > TRACKING_LENGTH:
+                obj_data['positions'].popleft()
+            
+            # Update object data
+            obj_data['box'] = det_data['box']
+            obj_data['last_seen'] = frame_count
+            obj_data['license_plate'] = det_data['license_plate']
+            obj_data['helmet_detected'] = det_data['helmet_detected']
+            
+            # Calculate speed if we have enough position history
+            if len(obj_data['positions']) >= 2:
+                speed_kmh, speed_ms = calculate_speed(
+                    obj_data['positions'][-2], 
+                    obj_data['positions'][-1], 
+                    fps, 
+                    PIXELS_PER_METER
+                )
+                obj_data['speed_kmh'] = speed_kmh
+                obj_data['speed_ms'] = speed_ms
+                
+                # Check for speeding violation
+                if speed_kmh > SPEED_LIMIT_KMH and not obj_data['violations']['speeding']:
+                    obj_data['violations']['speeding'] = True
+                    violation_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    violation_msg = f"SPEEDING: {speed_kmh:.1f} km/h (limit: {SPEED_LIMIT_KMH} km/h)"
+                    
+                    # Save evidence
+                    evidence_path = save_violation_evidence(
+                        obj_id, "speeding", frame, obj_data['license_plate']
+                    )
+                    
+                    # Log violation
+                    violations_log.append({
+                        'id': obj_id,
+                        'type': 'speeding',
+                        'speed': speed_kmh,
+                        'timestamp': violation_time,
+                        'license_plate': obj_data['license_plate'],
+                        'evidence_path': evidence_path
+                    })
+                    
+                    print(f"VIOLATION DETECTED: {violation_msg}")
+            
+            # Check for red light violation
+            if (current_signal_state == "red" and 
+                in_signal_area(curr_center[0], curr_center[1]) and 
+                not obj_data['violations']['red_light']):
+                
+                obj_data['violations']['red_light'] = True
+                violation_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                violation_msg = "RED LIGHT VIOLATION"
+                
+                # Save evidence
+                evidence_path = save_violation_evidence(
+                    obj_id, "red_light", frame, obj_data['license_plate']
+                )
+                
+                # Log violation
+                violations_log.append({
+                    'id': obj_id,
+                    'type': 'red_light',
+                    'speed': obj_data.get('speed_kmh', 0),
+                    'timestamp': violation_time,
+                    'license_plate': obj_data['license_plate'],
+                    'evidence_path': evidence_path
+                })
+                
+                print(f"VIOLATION DETECTED: {violation_msg}")
+            
+            # Check for helmet violation (two-wheelers only)
+            if (obj_data['type'] in two_wheeler_classes and 
+                not obj_data['helmet_detected'] and 
+                not obj_data['violations']['no_helmet']):
+                
+                obj_data['violations']['no_helmet'] = True
+                violation_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                violation_msg = "NO HELMET VIOLATION"
+                
+                # Save evidence
+                evidence_path = save_violation_evidence(
+                    obj_id, "no_helmet", frame, obj_data['license_plate']
+                )
+                
+                # Log violation
+                violations_log.append({
+                    'id': obj_id,
+                    'type': 'no_helmet',
+                    'speed': obj_data.get('speed_kmh', 0),
+                    'timestamp': violation_time,
+                    'license_plate': obj_data['license_plate'],
+                    'evidence_path': evidence_path
+                })
+                
+                print(f"VIOLATION DETECTED: {violation_msg}")
+        
+        # Remove objects that haven't been seen for a while
+        for obj_id in unmatched_existing_ids:
+            if frame_count - tracked_objects[obj_id]['last_seen'] > 30:  # 30 frames timeout
+                del tracked_objects[obj_id]
+        
+        # Add new detections as tracked objects
+        for det_id in unmatched_new_ids:
+            det_data = detections[det_id]
+            center = get_center(det_data['box'])
+            
+            tracked_objects[det_id] = {
+                'box': det_data['box'],
+                'type': det_data['type'],
+                'positions': deque([center], maxlen=TRACKING_LENGTH),
+                'last_seen': frame_count,
+                'license_plate': det_data['license_plate'],
+                'helmet_detected': det_data['helmet_detected'],
+                'speed_kmh': 0,
+                'speed_ms': 0,
+                'violations': {
+                    'speeding': False,
+                    'red_light': False,
+                    'no_helmet': False
+                }
+            }
+        
+        # Draw bounding boxes and information
+        for obj_id, obj_data in tracked_objects.items():
+            x, y, w, h = obj_data['box']
+            
+            # Determine box color based on violations
+            box_color = GREEN
+            if obj_data['violations']['speeding'] or obj_data['violations']['red_light']:
+                box_color = RED
+            elif obj_data['type'] == 'person':
+                box_color = PURPLE
+            elif obj_data['type'] in two_wheeler_classes:
+                box_color = ORANGE if obj_data['helmet_detected'] else RED
+            elif obj_data['type'] in ['car', 'bus', 'truck']:
+                box_color = BLUE
+            
+            # Draw bounding box
+            cv2.rectangle(frame, (x, y), (x + w, y + h), box_color, 2)
+            
+            # Prepare information text
+            info_text = f"{obj_data['type']}"
+            if obj_data['speed_kmh'] > 0:
+                info_text += f" {obj_data['speed_kmh']:.1f} km/h"
+            
+            # Add license plate if available
+            if obj_data['license_plate'] != "NOT RECORDED":
+                info_text += f" | {obj_data['license_plate']}"
+            
+            # Add violation indicators
+            violations = []
+            if obj_data['violations']['speeding']:
+                violations.append("SPEEDING")
+            if obj_data['violations']['red_light']:
+                violations.append("RED LIGHT")
+            if obj_data['violations']['no_helmet']:
+                violations.append("NO HELMET")
+            
+            if violations:
+                info_text += " | " + ", ".join(violations)
+            
+            # Draw information text
+            cv2.putText(frame, info_text, (x, y - 10), 
+                       cv2.FONT_HERSHEY_SIMPLEX, 0.5, box_color, 1)
+            
+            # Draw trajectory
+            if len(obj_data['positions']) > 1:
+                for i in range(1, len(obj_data['positions'])):
+                    cv2.line(frame, obj_data['positions'][i-1], obj_data['positions'][i], box_color, 2)
+        
+        # Display FPS and violation count
+        cv2.putText(frame, f"FPS: {fps:.1f}", (10, 30), 
+                   cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
+        cv2.putText(frame, f"Violations: {len(violations_log)}", (10, 60), 
+                   cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+        cv2.putText(frame, f"Objects: {len(tracked_objects)}", (10, 90), 
+                   cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 0), 2)
+        
+        # Display the frame
+        cv2.imshow('Traffic Violation Detection', frame)
+    
+    # Handle keyboard input
+    key = cv2.waitKey(1) & 0xFF
+    if key == ord('q'):
+        break
+    elif key == ord('p'):
+        paused = not paused
+        print("Paused" if paused else "Resumed")
+    elif key == ord('r') and is_video_file:
+        restart_video = True
+        print("Restarting video...")
+
+# Clean up
+cap.release()
+cv2.destroyAllWindows()
+
+# Print summary of violations
+print("\n=== VIOLATION SUMMARY ===")
+for i, violation in enumerate(violations_log, 1):
+    print(f"{i}. {violation['timestamp']} - {violation['type']} - "
+          f"Speed: {violation['speed']:.1f} km/h - "
+          f"License: {violation['license_plate']}")
+
+print(f"\nTotal violations detected: {len(violations_log)}")
+print("Evidence saved in the 'violations' directory")
